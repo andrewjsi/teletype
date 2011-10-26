@@ -293,9 +293,9 @@ void dooutput() {
 	done();
 }
 
-void
-doshell() {
+void doshell () {
 	char *shname;
+	printf("TERM is now \"vt100\"\r\n");
 	setenv("TERM", "vt100", 1);
 
 #if 0
