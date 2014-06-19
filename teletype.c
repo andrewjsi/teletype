@@ -1,3 +1,16 @@
+/* JSS TeleType Connector
+ * © Copyright 2010-2014 Andras Jeszenszky and JSS & Hayer IT - http://www.jsshayer.hu
+ * License: GPL2
+ *
+ * There functions imported from script.c of util-linux project: doinput()
+ * finish() resize() fatal() resize_clients() send_noecho() remove_element()
+ * dooutput() doshell() fixtty () fail() done() getmaster() getslave()
+ *
+ * Copyright (c) 1980 Regents of the University of California.
+ * All rights reserved.
+ *
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -67,8 +80,6 @@ void sendport (char *data, int len) {
     char data2[BUFSIZ]; // A BUFSIZ az stdio.h -ban van generálva és 4096 az értéke (Dellina 2.6.28)
     stringconv(data, len, data2, BUFSIZ);
 
-    //~ memcpy(data2, data, len);
-
     char *tmp;
     char buf[8];
     for (i = 0; i < len; i++) {
@@ -78,7 +89,6 @@ void sendport (char *data, int len) {
         if (wtime) {
             usleep(wtime);
         }
-//~ dumpf("%d (%d)\n", (int)*tmp, len);
     }
 
     // csipogunk, ha már rég jártunk erre :)
@@ -155,7 +165,7 @@ int main( int argc, char **argv) {
         progname = p+1;
 
     if (argc < 3) {
-        fprintf(stderr, "JSS TeleType Connector (c) 2010 Andrew JSI\nusage: %s <serialport> <baud> [wtime]\n", progname);
+        fprintf(stderr, "JSS TeleType Connector (c) 2010-2014 JSS & Hayer IT\nusage: %s <serialport> <baud> [wtime]\n", progname);
         return 255;
     }
 
@@ -221,8 +231,7 @@ void finish (int dummy) {
     }
 }
 
-void
-resize(int dummy) {
+void resize (int dummy) {
     /* transmit window change information to the child */
     (void) ioctl(0, TIOCGWINSZ, (char *)&win);
     (void) ioctl(slave, TIOCSWINSZ, (char *)&win);
@@ -230,7 +239,7 @@ resize(int dummy) {
     kill(child, SIGWINCH);
 }
 
-void fatal() {
+void fatal () {
     done();
     exit(-1);
 }
@@ -240,23 +249,23 @@ void sig_resize_clients (int x) {
 }
 
 void resize_clients () {
-  int rows, cols;
-  char tmp[100];
-  int len;
+    int rows, cols;
+    char tmp[100];
+    int len;
 
-  /* Get rows and cols from our connection to the terminal: fd 1 */
+    /* Get rows and cols from our connection to the terminal: fd 1 */
     (void) ioctl(0, TIOCGWINSZ, (char *)&win);
-  rows = win.ws_row;
-  cols = win.ws_col;
+    rows = win.ws_row;
+    cols = win.ws_col;
 
-  /* Prepare the xterm resize string */
-  snprintf(tmp, 100, "\033[8;%i;%it\n", rows, cols);
-  len = strlen(tmp);
+    /* Prepare the xterm resize string */
+    snprintf(tmp, 100, "\033[8;%i;%it\n", rows, cols);
+    len = strlen(tmp);
 }
 
 void send_noecho(int fd) {
-  char seq[] = { 255 /*IAC*/, 251 /*WILL*/, 1 /*ECHO*/ };
-  send(fd, seq, sizeof seq, 0);
+    char seq[] = { 255 /*IAC*/, 251 /*WILL*/, 1 /*ECHO*/ };
+    send(fd, seq, sizeof seq, 0);
 }
 
 void remove_element(int index, int *array, int total) {
@@ -305,15 +314,6 @@ void doshell () {
     char *shname;
     setenv("TERM", "vt100", 1);
 
-#if 0
-    int t;
-    t = open(_PATH_TTY, O_RDWR);
-    if (t >= 0) {
-        (void) ioctl(t, TIOCNOTTY, (char *)0);
-        (void) close(t);
-    }
-#endif
-
     getslave();
     (void) close(master);
     (void) dup2(slave, 0);
@@ -336,8 +336,7 @@ void doshell () {
     fail();
 }
 
-void
-fixtty() {
+void fixtty () {
     struct termios rtt;
 
     rtt = tt;
@@ -346,14 +345,12 @@ fixtty() {
     (void) tcsetattr(0, TCSAFLUSH, &rtt);
 }
 
-void
-fail() {
-
+void fail () {
     (void) kill(0, SIGTERM);
     done();
 }
 
-void done() {
+void done () {
     if (subchild) {
         (void) close(master);
     } else {
@@ -377,5 +374,4 @@ void getslave () {
     setsid();
     ioctl(slave, TIOCSCTTY, 0);
 }
-
 
