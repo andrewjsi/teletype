@@ -1,20 +1,16 @@
 CC = gcc
 CFLAGS = -Wall
-LIBS = -lutil
-OBJ=stringconv.o teletype.o
-BIN=teletype
+LDFLAGS = -lutil
 
-all: $(OBJ)
-	$(CC) $(CFLAGS) -o $(BIN) $(OBJ) $(LIBS)
+OBJ += stringconv.o
+PROGS=teletype
 
-doc:
-	doxygen
-	@echo ""
-	@echo "DOC URL: file://"`pwd`"/html/index.html"
-	@echo ""
+.PHONY: all
+all: $(patsubst %, %.o, $(PROGS)) $(OBJ) $(PROGS)
+
+%: %.o $(OBJ)
+	$(CC) $(CFLAGS) -o $@ $< $(OBJ) $(LDFLAGS)
 
 clean:
-	rm -rf $(OBJ) $(BIN) dump core html/ latex/ man/
+	rm -f *.o $(OBJ) $(PROGS)
 
-# Függőségek
-#policy.o: server.h
