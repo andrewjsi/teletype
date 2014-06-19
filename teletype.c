@@ -45,6 +45,7 @@ static char *cflg = NULL;
 static char *progname;
 static int serialport; // by JSI
 static time_t lastwrite = 0;
+useconds_t wtime;
 
 // ha ennyi másodperc üresjárat után íródik valami a terminálra,
 // akkor a kiírást megelőzi egy BELL karakter kiküldése
@@ -74,6 +75,9 @@ void sendport (char *data, int len) {
         tmp = data2 + i;
         snprintf(buf, 2, "%c", (int)*tmp);
         write(serialport, buf, 1);
+        if (wtime) {
+            usleep(wtime);
+        }
 //~ dumpf("%d (%d)\n", (int)*tmp, len);
     }
 
@@ -150,9 +154,13 @@ int main( int argc, char **argv) {
     if ((p = strrchr(progname, '/')) != NULL)
         progname = p+1;
 
-    if (argc != 3 ) {
-        fprintf(stderr, "JSS TeleType Connector (c) 2010 Andrew JSI\nusage: %s <serialport> <baud>\n", progname);
+    if (argc < 3) {
+        fprintf(stderr, "JSS TeleType Connector (c) 2010 Andrew JSI\nusage: %s <serialport> <baud> [wtime]\n", progname);
         return 255;
+    }
+
+    if (argc > 3) {
+        wtime = atoi(argv[3]);
     }
 
     init_serialport(argv[1], atoi(argv[2]));
@@ -295,7 +303,6 @@ void dooutput() {
 
 void doshell () {
     char *shname;
-    printf("TERM is now \"vt100\"\r\n");
     setenv("TERM", "vt100", 1);
 
 #if 0
