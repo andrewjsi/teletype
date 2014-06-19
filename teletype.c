@@ -46,8 +46,8 @@ static char *progname;
 static int serialport; // by JSI
 static time_t lastwrite = 0;
 
-// ha ennyi m·sodperc ¸resj·rat ut·n ÌrÛdik valami a termin·lra,
-// akkor a kiÌr·st megelızi egy BELL karakter kik¸ldÈse
+// ha ennyi m√°sodperc √ºresj√°rat ut√°n √≠r√≥dik valami a termin√°lra,
+// akkor a ki√≠r√°st megel≈ëzi egy BELL karakter kik√ºld√©se
 static int beeplast = 181;
 
 static char clear[] = {27, 91, 72, 27, 91, 74, 0};
@@ -63,7 +63,7 @@ void dumpf (const char *fmt, ...) {
 
 void sendport (char *data, int len) {
     int i;
-    char data2[BUFSIZ]; // A BUFSIZ az stdio.h -ban van gener·lva Ès 4096 az ÈrtÈke (Dellina 2.6.28)
+    char data2[BUFSIZ]; // A BUFSIZ az stdio.h -ban van gener√°lva √©s 4096 az √©rt√©ke (Dellina 2.6.28)
     stringconv(data, len, data2, BUFSIZ);
 
     //~ memcpy(data2, data, len);
@@ -77,7 +77,7 @@ void sendport (char *data, int len) {
 //~ dumpf("%d (%d)\n", (int)*tmp, len);
     }
 
-    // csipogunk, ha m·r rÈg j·rtunk erre :)
+    // csipogunk, ha m√°r r√©g j√°rtunk erre :)
     if (time(NULL) > lastwrite + beeplast) {
         int bell = 7;
         write(serialport, (char*)&bell, 1);
@@ -131,15 +131,15 @@ static void init_serialport (char *device, int speed) {
 
     fcntl(serialport, F_SETFL, 0);
     struct termios options;
-    tcgetattr(serialport, &options); // serialport aktu·lis be·llÌt·sainak lekÈrdezÈse
-    cfsetispeed(&options, getspeed(speed)); // bejˆvı baud be·llÌt·sa
-    cfsetospeed(&options, getspeed(speed)); // kimenı baud be·llÌt·sa
-    options.c_cflag |= (CLOCAL | CREAD); // vevı engedÈlyezÈse, lok·lis mÛd be·llÌt·sa
+    tcgetattr(serialport, &options); // serialport aktu√°lis be√°ll√≠t√°sainak lek√©rdez√©se
+    cfsetispeed(&options, getspeed(speed)); // bej√∂v≈ë baud be√°ll√≠t√°sa
+    cfsetospeed(&options, getspeed(speed)); // kimen≈ë baud be√°ll√≠t√°sa
+    options.c_cflag |= (CLOCAL | CREAD); // vev≈ë enged√©lyez√©se, lok√°lis m√≥d be√°ll√≠t√°sa
     options.c_cflag &= ~PARENB;
     options.c_cflag &= ~CSTOPB;
     options.c_cflag &= ~CSIZE;
     options.c_cflag |= CS8;
-    tcsetattr(serialport, TCSANOW, &options); // be·llÌt·sok mentÈse
+    tcsetattr(serialport, TCSANOW, &options); // be√°ll√≠t√°sok ment√©se
 }
 
 int main( int argc, char **argv) {
